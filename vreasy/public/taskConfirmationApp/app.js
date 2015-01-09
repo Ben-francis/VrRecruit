@@ -9,7 +9,13 @@ angular.module('taskConfirmationApp',  ['ui.router', 'ngResource'])
       url: "/",
       templateUrl: "/taskConfirmationApp/templates/index.html",
       controller: 'TaskCtrl'
+    })
+    .state('task',{
+        url: "/task/:id",
+        templateUrl: "/taskConfirmationApp/templates/task.html",
+        controller: "TaskHistoryCtrl"
     });
+   
 })
 .factory('Task', function($resource) {
     return $resource('/task/:id?format=json',
@@ -24,6 +30,27 @@ angular.module('taskConfirmationApp',  ['ui.router', 'ngResource'])
         }
     );
 })
+.factory('TaskHistory',function($resource){
+    
+    return $resource('/task-history/:id?format=json',
+                    { id: '@id'} ,
+                    {
+                        
+                        'query': { method: 'GET', isArray: true }
+                    }
+                    );
+})
 .controller('TaskCtrl', function($scope, Task) {
     $scope.tasks = Task.query();
-});
+    $scope.markComplete = function(id){
+        Task.save({id:id,status:'complete'});
+        $scope.tasks=Task.query();
+    };
+})
+
+.controller('TaskHistoryCtrl',['$scope','$stateParams','Task','TaskHistory', function ($scope,$stateParams, Task, TaskHistory){
+               
+                $scope.taskHistories = TaskHistory.query({id:$stateParams.id});
+                $scope.task = Task.get({id: $stateParams.id});
+    }]
+ );

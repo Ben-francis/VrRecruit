@@ -1,0 +1,38 @@
+<div ng-controller="TaskHistoryCtrl" class="taskCtrl">
+<h1>Task {{task.id}}</h1>
+
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Deadline</th>
+    <th>Assignee</th>
+    <th>Phone</th>
+    <th>Status</th>
+  </tr>
+
+  <tr>
+    <td>{{task.id}}</td>
+    <td>{{task.deadline}}</td>
+    <td>{{task.assigned_name}}</td>
+    <td>{{task.assigned_phone}}</td>
+    <td>{{task.status}}</td>
+    
+  </tr>
+</table>
+<h2>Task History</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Changed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="taskHistory in taskHistories">
+            <td>{{taskHistory.status}}</td>
+            <td>{{taskHistory.changed_at}}</td>
+        </tr>
+    </tbody>
+</table>
+<a href="/#" class="btn">Back to task list</a>
+</div>

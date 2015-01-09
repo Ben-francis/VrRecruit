@@ -1,6 +1,7 @@
 <?php
 
 use Vreasy\Models\Task;
+use Vreasy\Models\TaskHistory;
 
 class Vreasy_TaskController extends Vreasy_Rest_Controller
 {
@@ -13,15 +14,20 @@ class Vreasy_TaskController extends Vreasy_Rest_Controller
         $action = $req->getActionName();
         $contentType = $req->getHeader('Content-Type');
         $rawBody     = $req->getRawBody();
+      
         if ($rawBody) {
+           
             if (stristr($contentType, 'application/json')) {
                 $req->setParams(['task' => Zend_Json::decode($rawBody)]);
             }
         }
         if($req->getParam('format') == 'json') {
+            
             switch ($action) {
                 case 'index':
+                    
                     $this->tasks = Task::where([]);
+                    
                     break;
                 case 'new':
                     $this->task = new Task();
@@ -35,8 +41,9 @@ class Vreasy_TaskController extends Vreasy_Rest_Controller
                     $this->task = Task::findOrInit($req->getParam('id'));
                     break;
             }
+            
         }
-
+        
         if( !in_array($action, [
                 'index',
                 'new',
@@ -44,9 +51,10 @@ class Vreasy_TaskController extends Vreasy_Rest_Controller
                 'update',
                 'destroy'
             ]) && !$this->tasks && !$this->task->id) {
+            
             throw new Zend_Controller_Action_Exception('Resource not found', 404);
         }
-
+        
     }
 
     public function indexAction()
@@ -84,6 +92,7 @@ class Vreasy_TaskController extends Vreasy_Rest_Controller
         Task::hydrate($this->task, $this->_getParam('task'));
         if ($this->task->isValid() && $this->task->save()) {
             $this->view->task = $this->task;
+            
         } else {
             $this->view->errors = $this->task->errors();
             $this->getResponse()->setHttpResponseCode(422);
@@ -98,4 +107,5 @@ class Vreasy_TaskController extends Vreasy_Rest_Controller
             $this->view->errors = ['delete' => 'Unable to delete resource'];
         }
     }
+    
 }

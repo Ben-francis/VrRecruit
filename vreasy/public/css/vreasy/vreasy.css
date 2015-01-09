@@ -9,6 +9,9 @@ textarea {
 .nomargin {
   margin: 0 !important;
 }
+td{
+    padding-right:10px;
+}
 .nopadding {
   padding: 0 !important;
 }

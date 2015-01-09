@@ -1,3 +1,4 @@
+<div ng-controller="TaskCtrl" class="taskCtrl">
 <h1>
 <ng-pluralize count="tasks.length"
                  when="{'0': 'Sorry, there are no tasks',
@@ -12,6 +13,7 @@
     <th>Deadline</th>
     <th>Assignee</th>
     <th>Phone</th>
+    <th>Status</th>
     <th></th>
     <th></th>
     <th></th>
@@ -22,10 +24,13 @@
     <td>{{task.deadline}}</td>
     <td>{{task.assigned_name}}</td>
     <td>{{task.assigned_phone}}</td>
+    <td>{{task.status}}</td>
+    <td><a ng-if="task.status =='accepted'" href="" ng_click="markComplete(task.id)" class="btn">Mark as Complete</a>
     <td>
-      <a href="" class="btn" disabled>
+      <a href="/#/task/{{task.id}}" class="btn">
         Show
       </a>
     </td>
   </tr>
 </table>
+</div>

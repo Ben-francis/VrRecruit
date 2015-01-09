@@ -15,6 +15,7 @@ vendor
 tests/_log/*
 /.settings/org.eclipse.core.resources.prefs
 node_modules/
+nbproject/
 vreasy/public/bower_components/*
 tests/_log/*
 # php profiler that usually is in the public folder
@@ -24,3 +25,4 @@ bin/
 # Do not ignore the gitkeeps
 !*.gitkeep
 .elasticbeanstalk/
+/nbproject/private/

@@ -4,53 +4,45 @@ namespace Vreasy\Models;
 
 use Vreasy\Query\Builder;
 
-class Task extends Base
+class Sms extends Base
 {
     // Protected attributes should match table columns
     protected $id;
-    protected $deadline;
-    protected $assigned_name;
-    protected $assigned_phone;
     protected $created_at;
-    protected $updated_at;
-    protected $status;
+    protected $task_id;
+    protected $sid;
+    protected $from;
+    protected $to;
+    protected $body;
+   
 
     public function __construct()
     {
+           
         // Validation is done run by Valitron library
         $this->validates(
             'required',
-            ['deadline', 'assigned_name', 'assigned_phone', 'status']
+            ['task_id', 'sid', 'from', 'to', 'body']
         );
         $this->validates(
             'date',
-            ['created_at', 'updated_at']
+            ['created_at']
         );
         $this->validates(
             'integer',
-            ['id']
+            ['id', 'task_id']
         );
     }
-
+    
+   
     public function save()
     {
         // Base class forward all static:: method calls directly to Zend_Db
         if ($this->isValid()) {
-            $this->updated_at = gmdate(DATE_FORMAT);
-            $this->assigned_phone = static::convertToE164($this->assigned_phone);
-            if ($this->isNew()) {
-                $this->created_at = $this->updated_at;
-                static::insert('tasks', $this->attributesForDb());
+            
+                static::insert('sms', $this->attributesForDb());
                 $this->id = static::lastInsertId();
-                self::updateHistory($this);
-            } else {
-                static::update(
-                    'tasks',
-                    $this->attributesForDb(),
-                    ['id = ?' => $this->id]
-                );
-                self::updateHistory($this);
-            }
+           
             return $this->id;
         }
     }
@@ -63,31 +55,28 @@ class Task extends Base
         }
         return $task;
     }
-    
-    public static function findByPhone($from){
-       
-        $task = new Task();
-        if($tasksFound = static::where(['assigned_phone' => $from])){
-            
-            $task = array_pop($tasksFound);
-            
-            
-        }
-        return $task;
+
+    public static function guessStatus($body){
+        
+        //If is no, first letter will always be n, else presume is yes.
+        //First strip all weird characters and whitespace, convert to lowercase
+        $body=preg_replace('/\s+/', '', $body);
+        $body=preg_replace('/[^A-Za-z0-9\-]/', '', $body);
+        $body=strtolower($body);
+        
+        $firstletter=substr($body,0,1);
+        if($firstletter =='n') return 'refused';
+        return 'accepted';
         
     }
-    
-    public static function convertToE164($phone){
-         return preg_replace("/[\s-]+/", "", $phone);
-    }
-    
+
     public static function where($params, $opts = [])
     {
         // Default options' values
         $limit = 0;
         $start = 0;
         $orderBy = ['created_at'];
-        $orderDirection = ['asc'];
+        $orderDirection = ['ASC'];
         extract($opts, EXTR_IF_EXISTS);
         $orderBy = array_flatten([$orderBy]);
         $orderDirection = array_flatten([$orderDirection]);
@@ -100,7 +89,7 @@ class Task extends Base
             ['wildcard' => true, 'prefix' => 't.']);
 
         // Select header
-        $select = "SELECT t.* FROM tasks AS t";
+        $select = "SELECT t.* FROM sms AS t";
 
         // Build order by
         foreach ($orderBy as $i => $value) {
@@ -129,12 +118,5 @@ class Task extends Base
             }
         }
         return $collection;
-    }
-    private function updateHistory($task){
-        TaskHistory::instanceWith([
-            'task_id' => $task->id,
-            'status' => $task->status
-        ])->save();
-        
     }
 }

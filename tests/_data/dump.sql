@@ -54,6 +54,8 @@ CREATE TABLE `tasks` (
   `updated_at` datetime DEFAULT NULL,
   `assigned_name` text,
   `assigned_phone` text,
+  `status` text,
+   
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -66,3 +68,10 @@ CREATE TABLE `tasks` (
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CREATE TABLE `task_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `changed_at` datetime DEFAULT NULL,
+  `task_id` int(11) DEFAULT NULL,
+  `status` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
